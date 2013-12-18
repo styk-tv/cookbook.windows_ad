@@ -112,8 +112,11 @@ def exists?
     user = Mixlib::ShellOut.new("dsquery user -name \"#{reverse_name}\"").run_command
     contact.stdout.include? "DC" or user.stdout.include? "DC"
   else
-    contact = Mixlib::ShellOut.new("dsquery contact -name #{new_resource.name}").run_command
-    user = Mixlib::ShellOut.new("dsquery user -name #{new_resource.name}").run_command
-    contact.stdout.include? "DC" or user.stdout.include? "DC"
+    # ORG: contact = Mixlib::ShellOut.new("dsquery contact -name #{new_resource.name}").run_command
+    # contact = Mixlib::ShellOut.new("dsquery contact -samid #{new_resource.options[samid]}").run_command
+    # ORG: user = Mixlib::ShellOut.new("dsquery user -name #{new_resource.name}").run_command
+    user = Mixlib::ShellOut.new("dsquery user -samid #{new_resource.options['samid']}").run_command
+    # ORG: contact.stdout.include? "DC" or user.stdout.include? "DC"
+    user.stdout.include? "DC"
   end
 end
