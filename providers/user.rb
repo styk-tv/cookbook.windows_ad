@@ -97,7 +97,7 @@ def dn
     dn = "cn=#{new_resource.name},"
   end
   if /(U|u)sers/.match(new_resource.ou)
-    dn << "cn=#{new_resource.ou},"
+    dn << "ou=#{new_resource.ou},"
   else
     dn << new_resource.ou.split("/").reverse.map! { |k| "ou=#{k}" }.join(",")
     dn << ","

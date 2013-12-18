@@ -13,11 +13,16 @@ action :create do
       if value.nil?
         cmd << " -#{option}"
       else
-        cmd << " -#{option} '#{value}'"
+        cmd << " -#{option}:#{value}"
       end
     end 
     
-    powershell "create_domain_#{new_resource.name}" do
+    powershell_script "create_domain_#{new_resource.name}" do
+      #retries 5
+      #retry_delay 2000
+      #timeout 2000
+      #CRETING DOMAINS WITH THIS DOESNT WORK DUE TO TIMEOUT, LONG DELAY DID NOT HELP
+      #        ATTEMPTING TO CREATE DOMAIN USING POWERSHELL SCRIPT
       code cmd
     end
   
@@ -43,7 +48,7 @@ action :delete do
       end
     end
 
-    powershell "remove_domain_#{new_resource.name}" do
+    powershell_script "remove_domain_#{new_resource.name}" do
       code cmd
     end  
     
@@ -62,7 +67,7 @@ action :join do
       Chef::Log.error("The computer is already joined to the domain")
       new_resource.updated_by_last_action(false)
     else
-      powershell "join_#{new_resource.name}" do
+      powershell_script "join_#{new_resource.name}" do
         if node[:os_version] >= "6.2"
           code <<-EOH
             $secpasswd = ConvertTo-SecureString '#{new_resource.domain_pass}' -AsPlainText -Force
@@ -87,7 +92,7 @@ end
 
 action :unjoin do
   if computer_exists?
-    powershell "unjoin_#{new_resource.name}" do
+    powershell_script "unjoin_#{new_resource.name}" do
       code <<-EOH
       $secpasswd = ConvertTo-SecureString '#{new_resource.domain_pass}' -AsPlainText -Force
       $mycreds = New-Object System.Management.Automation.PSCredential ('#{new_resource.domain_user}', $secpasswd)
