@@ -2,7 +2,7 @@ require 'mixlib/shellout'
 
 action :create do
   if exists?
-    Chef::Log.error("The object already exists")
+    Chef::Log.warn("The object already exists")
     new_resource.updated_by_last_action(false)
   else
     cmd = "dsadd"
